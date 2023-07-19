@@ -1,0 +1,27 @@
+{% extends "blog/base.html" %}
+
+{% block titulo %}
+<div class="w3-container w3-indigo w3-round-large w3-padding-16 w3-center">
+    <h1>{{title}}</h1>
+</div>
+
+
+<div class="w3-container w3-round-large w3-padding-16 w3-margin-top w3-margin-bottom">
+    <div class="w3-card-4 w3-margin-top">
+        <header class="w3-container">
+            <h1>Acerca de mi:</h1>
+        </header>
+        <div class="w3-container">
+            <br>
+            <h4> Soy Bruno Gudiño y actualmente estoy estudiando para licenciado en informatica y desarrollo de software en la facultad aconcagua.</h4>
+            <br>
+        </div>
+</div>
+
+
+<!-- Botones -->
+<div class="w3-bar w3-padding-32 w3-center">
+    <a class="btn btn-outline-dark" href=" {% url 'inicio' %} ">Volver al inicio</button></a>
+</div>
+
+{% endblock titulo %}

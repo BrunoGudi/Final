@@ -1,0 +1,85 @@
+from django.shortcuts import render, redirect
+from django.urls import reverse, reverse_lazy
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LogoutView
+from django.views.generic import UpdateView
+from usuarios.models import Avatar
+from usuarios.forms import RegisterForm, UpdateForm, AvatarForm
+
+# Create your views here.
+
+def registro(request):
+    if request.method == "POST":
+        formulario = RegisterForm(request.POST)
+
+        if formulario.is_valid():
+            formulario.save()  
+            url_exitosa = reverse('inicio')
+            return redirect(url_exitosa)
+    else: 
+        formulario = RegisterForm()
+    
+    return render(
+        request=request,
+        template_name='usuarios/registro.html',
+        context={'form': formulario},
+    )
+
+def login_view(request):
+    next_url = request.GET.get('next')
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+
+        if form.is_valid():
+            data = form.cleaned_data
+            usuario = data.get('username')
+            password = data.get('password')
+            user = authenticate(username=usuario, password=password)
+            if user:
+                login(request=request, user=user)
+                if next_url:
+                    return redirect(next_url)
+                url_exitosa = reverse('inicio')
+                return redirect(url_exitosa)
+    else:
+        form = AuthenticationForm()
+    return render(
+        request=request,
+        template_name='usuarios/login.html',
+        context={'form': form},
+    )
+
+class CustomLogoutView(LogoutView):
+    template_name = 'usuarios/logout.html'
+
+class MiPerfilUpdateView(LoginRequiredMixin, UpdateView):
+    form_class = UpdateForm
+    success_url = reverse_lazy('inicio')
+    template_name = 'usuarios/formulario_usuario.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+def agregar_avatar(request):
+    if request.method == "POST":
+        formulario = AvatarForm(request.POST, request.FILES)
+        if formulario.is_valid():
+            avatar_anterior = Avatar.objects.filter(user=request.user)
+            if (len(avatar_anterior) > 0):
+                avatar_anterior.delete()
+            avatar_nuevo = Avatar(user=request.user, imagen=formulario.cleaned_data["imagen"])
+            avatar_nuevo.save()
+            url_exitosa = reverse('inicio')
+            return redirect(url_exitosa)
+    else:
+        formulario = AvatarForm()
+
+    avatar = Avatar.objects.get(user=request.user) if Avatar.objects.filter(user=request.user).exists() else None
+
+    return render(
+        request=request,
+        template_name="usuarios/avatar.html",
+        context={'form': formulario, 'avatar':avatar},
+    )
