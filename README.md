@@ -8,4 +8,4 @@ https://youtu.be/dqy5BtGZlxc
 Abre una terminal o línea de comandos en tu máquina local.
 Crear una carpeta para guardar el archivo en la ubicación donde deseas clonar el proyecto
 Ejecuta el siguiente comando para clonar el repositorio:
-git clone https://github.com/BrunoGudi/Final
+git clone https://github.com/BrunoGudi/Final/tree/master
